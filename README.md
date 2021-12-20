@@ -1,6 +1,9 @@
 # Bewm
 A 3d raycast engine im working on
 
+# Requirements:
+* SDL2
+
 # Compiling:
 
 ## Mac/Linux:
