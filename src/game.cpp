@@ -6,7 +6,7 @@
 
 const double maxDist = sqrt(SCREEN_WIDTH * SCREEN_WIDTH + SCREEN_HEIGHT * SCREEN_HEIGHT);
 
-Game::Game(const char* title, int xpos, int ypos, int width, int height, bool fullscreen)
+Game::Game(const char *title, int xpos, int ypos, int width, int height, bool fullscreen)
 {
     start_time = SDL_GetTicks();
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
@@ -56,12 +56,12 @@ bool Game::running()
     return is_running;
 }
 
-void Game::handleEvents(const double dT)
+void Game::handleEvents(const double dt)
 {
     SDL_Event event;
 
     const Uint8* keystate = SDL_GetKeyboardState(NULL);
-    player->handle_key_presses(keystate, dT);
+    player->handle_key_presses(keystate, dt);
     while (SDL_PollEvent(&event))
     {
         switch (event.type)
@@ -85,12 +85,15 @@ void Game::draw3D(const double dist, const double c)
     const double screenW = SCREEN_WIDTH * 2 / 3;
     const double sq = dist * dist;
     const double sqW = screenW * screenW;
+
     SDL_Rect rect;
-    rect.w = screenW / RAYS;
-    rect.x = screenX + rect.w * (RAYS - c);
-    rect.h = nmap(1/dist, 0, ANTI_FISH_EYE, 0, SCREEN_HEIGHT);
+    rect.w = static_cast<int>(screenW / RAYS * 3);
+    rect.x = static_cast<int>((screenW / RAYS) * (RAYS - c) * 2);
+    rect.h = static_cast<int>(nmap(1/dist, 0, ANTI_FISH_EYE, 0, SCREEN_HEIGHT));
     rect.y = (SCREEN_HEIGHT - rect.h)/2;
-    SDL_SetRenderDrawColor(renderer, nmap(dist, 0, maxDist-100, 255, 0), nmap(dist, 0, maxDist-100, 255, 0), nmap(dist, 0, maxDist-100, 255, 0), 255);
+    SDL_SetRenderDrawColor(renderer, nmap(dist, 0, maxDist-100, 112, 0),
+                           nmap(dist, 0, maxDist-100, 62, 0),
+                           nmap(dist, 0, maxDist-100, 26, 0), 255);
     SDL_RenderFillRect(renderer, &rect);
 }
 
@@ -114,9 +117,6 @@ void Game::renderRays()
                     minDist = dist;
             }
         }
-        double destX = player->get_x() + minDist *  cos(DEG2RAD * (player->get_angle() + fovOffset));
-        double destY = player->get_y() + minDist * -sin(DEG2RAD * (player->get_angle() + fovOffset));
-        ray.render(destX, destY);
         draw3D(minDist, c);
     }
 }
@@ -147,9 +147,9 @@ void Game::render()
 {
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
     SDL_RenderClear(renderer);
-    renderGrid();
+    renderSkybox();
+    renderGround();
     renderRays();
-    player->render();
     SDL_RenderPresent(renderer);
 }
 
@@ -163,4 +163,26 @@ void Game::quit()
     SDL_DestroyWindow(window);
     SDL_DestroyRenderer(renderer);
     SDL_Quit();
+}
+
+void Game::renderSkybox()
+{
+    SDL_Rect sky;
+    sky.w = SCREEN_WIDTH;
+    sky.h = SCREEN_HEIGHT/2.f;
+    sky.x = 0;
+    sky.y = 0;
+    SDL_SetRenderDrawColor(renderer, 135, 206, 235, 255);
+    SDL_RenderFillRect(renderer, &sky);
+}
+
+void Game::renderGround()
+{
+    SDL_Rect ground;
+    ground.w = SCREEN_WIDTH;
+    ground.h = SCREEN_HEIGHT / 2;
+    ground.x = 0;
+    ground.y = SCREEN_HEIGHT / 2;
+    SDL_SetRenderDrawColor(renderer, 0,154,23, 255);
+    SDL_RenderFillRect(renderer, &ground);
 }

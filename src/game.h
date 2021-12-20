@@ -15,17 +15,18 @@
 class Game
 {
 public:
-    Game();
     Game(const char *title, int xpos, int ypos, int width, int height, bool fullscreen);
     ~Game();
-    void readMap(const std::string& fileName);
+    void readMap(const std::string &fileName);
     void update(double dT);
     void render();
     bool running();
-    void handleEvents(const double dT);
+    void handleEvents(double dt);
     void quit();
     void renderGrid();
     void renderRays();
+    void renderSkybox();
+    void renderGround();
 
 private:
     bool is_running;
