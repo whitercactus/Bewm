@@ -21,7 +21,7 @@ or
 brew install cmake
 brew install sdl2
 ```
-
+and then
 ```
 mkdir build && cd build
 cmake ..
