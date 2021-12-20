@@ -14,6 +14,15 @@ msbuild Bewm.sln
 
 ## Mac/Linux:
 ```
+sudo apt-get install cmake libSDL2-dev
+```
+or
+```
+brew install cmake
+brew install sdl2
+```
+
+```
 mkdir build && cd build
 cmake ..
 make
